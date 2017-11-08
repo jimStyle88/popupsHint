@@ -1,3 +1,4 @@
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 module.exports = {
     devtool: 'eval-source-map',
     
@@ -24,16 +25,25 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    }, {
-                        loader: "css-loader",
-                        options: {
-                            modules: true
-                        }
-                    }
-                ]
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: [
+                        {
+                            loader: "style-loader"
+                        },{
+                            loader: "css-loader",
+                            options: {
+                                modules: true,
+                                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                                    getLocalIdent: (context, localIdentName, localName, options) => {
+                                            return localName
+                                    }
+                                }
+                        }, {
+                            loader: "postcss-loader"
+                            }
+                    ]    
+                })
             }
         ]
     }
